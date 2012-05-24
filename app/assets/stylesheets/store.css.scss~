@@ -35,17 +35,11 @@
       color: #227;
     }
 
-//#START:inline
     p, div.price_line {
       margin-left: 100px;
       margin-top: 0.5em; 
       margin-bottom: 0.8em; 
-
-      form, div {
-        display: inline;
-      }
     }
-//#END:inline
 
     .price {
       color: #44a;
@@ -55,4 +49,3 @@
   }
 }
 /* END_HIGHLIGHT */
-

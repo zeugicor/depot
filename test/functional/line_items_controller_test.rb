@@ -6,91 +6,63 @@
 # We make no guarantees that this code is fit for any purpose. 
 # Visit http://www.pragmaticprogrammer.com/titles/rails4 for more book information.
 #---
-class LineItemsController < ApplicationController
-  # GET /line_items
-  # GET /line_items.json
-  def index
-    @line_items = LineItem.all
+require 'test_helper'
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @line_items }
+class LineItemsControllerTest < ActionController::TestCase
+  setup do
+    @line_item = line_items(:one)
+  end
+
+  test "should get index" do
+    get :index
+    assert_response :success
+    assert_not_nil assigns(:line_items)
+  end
+
+  test "should get new" do
+    get :new
+    assert_response :success
+  end
+
+  test "should create line_item" do
+    assert_difference('LineItem.count') do
+      post :create, product_id: products(:ruby).id
     end
+
+    assert_redirected_to store_path
   end
 
-  # GET /line_items/1
-  # GET /line_items/1.json
-  def show
-    @line_item = LineItem.find(params[:id])
+  test "should show line_item" do
+    get :show, id: @line_item
+    assert_response :success
+  end
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @line_item }
+  test "should get edit" do
+    get :edit, id: @line_item
+    assert_response :success
+  end
+
+  test "should update line_item" do
+    put :update, id: @line_item, line_item: @line_item.attributes
+    assert_redirected_to line_item_path(assigns(:line_item))
+  end
+
+  test "should destroy line_item" do
+    assert_difference('LineItem.count', -1) do
+      delete :destroy, id: @line_item
     end
+
+    assert_redirected_to line_items_path
   end
 
-  # GET /line_items/new
-  # GET /line_items/new.json
-  def new
-    @line_item = LineItem.new
+  test "should create line_item via ajax" do
+    assert_difference('LineItem.count') do
+      xhr :post, :create, product_id: products(:ruby).id
+    end 
 
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @line_item }
-    end
-  end
-
-  # GET /line_items/1/edit
-  def edit
-    @line_item = LineItem.find(params[:id])
-  end
-
-  # POST /line_items
-  # POST /line_items.json
-  def create
-    @cart = current_cart
-    product = Product.find(params[:product_id])
-    @line_item = @cart.add_product(product.id)
-
-    respond_to do |format|
-      if @line_item.save
-        format.html { redirect_to @line_item.cart,
-          notice: 'Line item was successfully created.' }
-        format.json { render json: @line_item,
-          status: :created, location: @line_item }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @line_item.errors,
-          status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /line_items/1
-  # PUT /line_items/1.json
-  def update
-    @line_item = LineItem.find(params[:id])
-
-    respond_to do |format|
-      if @line_item.update_attributes(params[:line_item])
-        format.html { redirect_to @line_item, notice: 'Line item was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @line_item.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /line_items/1
-  # DELETE /line_items/1.json
-  def destroy
-    @line_item = LineItem.find(params[:id])
-    @line_item.destroy
-
-    respond_to do |format|
-      format.html { redirect_to line_items_url }
-      format.json { head :no_content }
+    assert_response :success
+    assert_select_jquery :html, '#cart' do
+      assert_select 'tr#current_item td', /Programming Ruby 1.9/
     end
   end
 end
